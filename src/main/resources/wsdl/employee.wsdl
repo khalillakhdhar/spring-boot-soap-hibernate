@@ -1,0 +1,115 @@
+<wsdl:definitions
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://bestpay.payroll/employee"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	targetNamespace="http://bestpay.payroll/employee">
+
+	<wsdl:documentation>
+		Service: EmployeeService
+		Version: 1.0
+		Owner: Mary
+		Zheng
+	</wsdl:documentation>
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="http://bestpay.payroll/employee"
+			xmlns:tns="http://bestpay.payroll/employee"
+			elementFormDefault="qualified">
+
+			<xs:simpleType name="EmployeeId">
+				<xs:restriction base="xs:string">
+					<xs:length value="7" />
+					<xs:pattern value="E[0-9]{7}" />
+				</xs:restriction>
+			</xs:simpleType>
+
+			<xs:simpleType name="EmployeeType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Hourly" />
+					<xs:enumeration value="Salary" />
+				</xs:restriction>
+			</xs:simpleType>
+
+			<xs:complexType name="EmployeeInfo">
+				<xs:sequence>
+					<xs:element name="eid" type="tns:EmployeeId"
+						minOccurs="0" nillable="false" />
+					<xs:element name="firstName" type="xs:string"
+						minOccurs="0" nillable="false" />
+					<xs:element name="lastName" type="xs:string"
+						minOccurs="0" nillable="false" />
+					<xs:element name="hourlyRate" type="xs:decimal"
+						minOccurs="0" nillable="false" />
+					<xs:element name="type" type="tns:EmployeeType"
+						minOccurs="0" nillable="false" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:complexType name="EmployeeInfoWrapper">
+				<xs:sequence>
+					<xs:element name="employeeInfo" type="tns:EmployeeInfo"
+						minOccurs="0" maxOccurs="unbounded" nillable="false" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:complexType name="EmployeeIdWrapper">
+				<xs:sequence>
+					<xs:element name="eid" type="tns:EmployeeId"
+						minOccurs="0" maxOccurs="unbounded" nillable="false" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:element name="employeeLookupRequest"
+				type="tns:EmployeeIdWrapper" />
+			<xs:element name="employeeServiceResponse"
+				type="tns:EmployeeInfoWrapper" />
+
+		</xs:schema>
+	</wsdl:types>
+
+	<wsdl:message name="employeeLookupRequest">
+		<wsdl:part element="tns:employeeLookupRequest"
+			name="employeeLookupRequest" />
+	</wsdl:message>
+
+	<wsdl:message name="employeeLookupResponse">
+		<wsdl:part element="tns:employeeServiceResponse"
+			name="employeeServiceResponse" />
+	</wsdl:message>
+
+	<wsdl:portType name="employeeLookupService">
+		<wsdl:documentation>Employee Lookup interface
+		</wsdl:documentation>
+		<wsdl:operation name="employeeLookup">
+			<wsdl:input message="tns:employeeLookupRequest" />
+			<wsdl:output message="tns:employeeLookupResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="employeeLookupBinding"
+		type="tns:employeeLookupService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="employeeLookup">
+			<soap:operation
+				soapAction="http://bestpay.payroll/employee/employeeLookup" />
+			<wsdl:input>
+				<soap:body parts="employeeLookupRequest" use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body parts="employeeServiceResponse" use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="employeeLookupService">
+		<wsdl:port binding="tns:employeeLookupBinding"
+			name="employeeLookupPort">
+			<soap:address
+				location="http://localhost:8080/soap/ws/employee" />
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>
